@@ -137,6 +137,7 @@ button.mini{padding:2px 9px;font-size:.78rem;margin-left:auto}
 .rec-points{margin:0;padding-left:18px;display:grid;gap:4px;font-size:.86rem}
 .rec-points.alt{color:var(--muted)}
 .rec-points.warn li:last-child{color:var(--warn)}
+.vbadge{margin-left:8px;font-size:.72rem;font-weight:600;padding:1px 7px;border-radius:9px;border:1px solid currentColor;vertical-align:1px}.vbadge.good{color:var(--ok)}.vbadge.mid{color:var(--accent)}.vbadge.bad{color:var(--warn)}
 .rec-copy{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:10px;border-top:1px dashed var(--line)}
 .rec-copy .confirm{font-size:.84rem;color:var(--warn)}
 .tabrow{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between}
@@ -837,6 +838,13 @@ function renderRecs(){
   if (t.alt && t.alt.length) {
     const ah = el("p", {class:"sub-h"}); ah.appendChild(el("b", null, "대안 · 참고")); right.appendChild(ah);
     const ul2 = el("ul", {class:"rec-points alt" + (t.warn ? " warn" : "")}); for (const s of t.alt) ul2.appendChild(el("li", null, s)); right.appendChild(ul2);
+  }
+  if (t.verify && t.verify.lines) {
+    const v = t.verify;
+    const vh = el("p", {class:"sub-h"}); vh.appendChild(el("b", null, "검증"));
+    vh.appendChild(el("span", {class:"vbadge " + (v.miss ? "bad" : v.flips.length ? "mid" : "good")}, v.miss ? "더 나은 조합 있음" : "가정 " + v.ok + "/" + v.n + " 유지"));
+    right.appendChild(vh);
+    const ul3 = el("ul", {class:"rec-points alt"}); for (const s of v.lines) ul3.appendChild(el("li", null, s)); right.appendChild(ul3);
   }
   const missing = t.slots.filter(n => n && !state.owned[n]);
   if (missing.length) right.appendChild(el("p", {class:"empty-note"}, "수첩에 보유 표시가 안 된 도술: " + missing.join(", ")));
