@@ -693,7 +693,7 @@ function renderRecs(){
   const GRP = {mob: "몰이", mobheal: "몰이", mobheal2: "몰이", pure: "필드 사냥", pureh: "필드 사냥", single: "필드 사냥", singleh: "필드 사냥", jhunt: "필드 사냥", jhunt_h: "필드 사냥", boss: "보스", boss_gi: "보스"};
   const rows = {};
   RECS.trees.forEach((t, i) => {
-    const g = GRP[t.id] || (t.id.startsWith("boss_") ? "보스" : t.id.startsWith("hunt_") ? "필드 사냥" : "기타");
+    const g = GRP[t.id] || (t.id.startsWith("boss_") ? "보스" : t.id.startsWith("hunt_") ? "필드 사냥" : t.id.startsWith("comm_") ? "커뮤니티 덱" : "기타");
     if (!rows[g]) { rows[g] = el("div", {class:"recgroup"}); rows[g].appendChild(el("span", {class:"lab"}, g)); tabs.appendChild(rows[g]); }
     const b = el("button", {type:"button", class:"tab", role:"tab", "aria-selected": i === recActive ? "true" : "false"}, t.tab);
     b.addEventListener("click", () => { recActive = i; recConfirm = null; renderRecs(); });
