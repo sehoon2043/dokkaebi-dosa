@@ -211,7 +211,7 @@ td.num input{font-variant-numeric:tabular-nums;text-align:right}
 
   <div class="cols">
   <div class="col-l panel" id="panelL">
-  <nav class="pnav" aria-label="왼쪽 패널 이동"><button type="button" data-go="sec-skills">도술</button><button type="button" data-go="sec-logs">실측 기록</button><button type="button" data-go="sec-memo">메모</button></nav>
+  <nav class="pnav" aria-label="왼쪽 패널 이동"><button type="button" data-go="sec-skills">도술</button></nav>
   <section id="sec-stats" hidden>
     <h2>캐릭터 능력치</h2>
     <p class="hint">캐릭터 정보 화면의 숫자를 그대로 적어 주세요. 모르는 칸은 비워 두면 됩니다.</p>
@@ -225,7 +225,7 @@ td.num input{font-variant-numeric:tabular-nums;text-align:right}
   </section>
 
 
-  <section id="sec-logs">
+  <section id="sec-logs" hidden>
     <h2>허수아비 실측 기록</h2>
     <p class="hint">초 당 피해량 측정기 결과를 적어 주세요. 도술별 수치는 메모 칸에 적어 두면 됩니다.</p>
     <div class="tablebox">
@@ -237,7 +237,7 @@ td.num input{font-variant-numeric:tabular-nums;text-align:right}
     <div class="row-actions"><button type="button" id="addLog">기록 추가</button></div>
   </section>
 
-  <section id="sec-memo">
+  <section id="sec-memo" hidden>
     <h2>메모</h2>
     <p class="hint">재화, 목표, 궁금한 점 등 자유롭게 적어 주세요.</p>
     <textarea id="memo"></textarea>
