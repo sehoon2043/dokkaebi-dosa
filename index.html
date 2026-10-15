@@ -75,9 +75,10 @@ textarea{min-height:90px;resize:vertical}
 .style-head .kind{font-size:.78rem;color:var(--muted);letter-spacing:.04em}
 .style-head .cnt{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .style-head .lvtag{margin-left:auto;font-size:.84rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.lvrow{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px;margin-bottom:12px}
+.lvrow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-bottom:12px}
+@media (max-width:700px){.lvrow{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .lvrow label{display:flex;align-items:center;justify-content:space-between;gap:6px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--sc);border-radius:8px;padding:6px 8px;font-size:.88rem;font-weight:600}
-.lvrow input{width:52px}
+.lvrow input{width:52px;min-width:0}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:.86rem;background:transparent;color:var(--muted)}
 .chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink);font-weight:500}
