@@ -248,9 +248,9 @@ td.num input{font-variant-numeric:tabular-nums;text-align:right}
   </section>
 
   <section id="sec-skills">
-    <h2>도술: 각성 레벨과 보유 도술</h2>
-    <p class="hint">각성은 스타일 전체에 적용되니 아래 칸에 스타일마다 레벨을 적고, 배운 도술을 눌러 표시하세요. 표시한 도술은 아래에 돌파 단계 칸이 생깁니다(도술 하나에만 적용, 캐릭터 능력치 상승). 궁극기는 신식으로 자동 장착이라 목록에서 뺐습니다.</p>
-    <div class="lvrow" id="lvrow" role="group" aria-label="스타일별 각성 레벨"></div>
+    <h2>도술: 강화 레벨과 보유 도술</h2>
+    <p class="hint">강화는 스타일 전체에 적용되니 아래 칸에 스타일마다 레벨을 적고, 배운 도술을 눌러 표시하세요. 표시한 도술은 아래에 각성 단계 칸이 생깁니다(도술 하나에만 적용, 캐릭터 능력치 상승). 궁극기는 신식으로 자동 장착이라 목록에서 뺐습니다.</p>
+    <div class="lvrow" id="lvrow" role="group" aria-label="스타일별 강화 레벨"></div>
     <div class="styles" id="styles"></div>
   </section>
 
@@ -335,12 +335,12 @@ function renderStats(){
     l.appendChild(inp); box.appendChild(l);
   }
 }
-function lvText(st){ const v = state.levels[st]; return "각성 Lv " + (v === "" || v == null ? "-" : v); }
+function lvText(st){ const v = state.levels[st]; return "강화 Lv " + (v === "" || v == null ? "-" : v); }
 function renderLevels(){
   const box = $("lvrow"); box.textContent = "";
   for (const st of DATA.styles) {
     const lab = el("label", {style:"--sc:" + STYLE_COLOR[st]}, st);
-    const lv = el("input", {id:"lv-" + st, type:"number", min:"0", max:"50", inputmode:"numeric", "aria-label": st + " 각성 레벨"});
+    const lv = el("input", {id:"lv-" + st, type:"number", min:"0", max:"50", inputmode:"numeric", "aria-label": st + " 강화 레벨"});
     lv.value = state.levels[st] ?? "";
     lv.addEventListener("input", () => { state.levels[st] = lv.value === "" ? "" : Number(lv.value); const t = $("lvt-" + st); if (t) t.textContent = lvText(st); changed(); });
     lab.appendChild(lv); box.appendChild(lab);
@@ -368,11 +368,11 @@ function renderStyles(){
     card.appendChild(chips);
     if (owned.length) {
       const ob = el("div", {class:"owned"});
-      const h = el("div", {class:"owned-row owned-head"}); h.appendChild(el("span", null, "보유 도술")); h.appendChild(el("span", null, "돌파")); ob.appendChild(h);
+      const h = el("div", {class:"owned-row owned-head"}); h.appendChild(el("span", null, "보유 도술")); h.appendChild(el("span", null, "각성")); ob.appendChild(h);
       for (const n of owned) {
         const r = el("div", {class:"owned-row"}); r.appendChild(el("span", null, n));
         for (const [key, max] of [["br",10]]) {
-          const s = el("select", {id: key + "-" + n, "aria-label": n + " 돌파"});
+          const s = el("select", {id: key + "-" + n, "aria-label": n + " 각성"});
           for (let i = 0; i <= max; i++) s.appendChild(el("option", {value:String(i)}, i + "단계"));
           s.value = String(state.owned[n][key] || 0);
           s.addEventListener("change", () => { state.owned[n][key] = Number(s.value); changed(); });
