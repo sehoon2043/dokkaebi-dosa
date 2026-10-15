@@ -74,8 +74,10 @@ textarea{min-height:90px;resize:vertical}
 .style-head b{font-size:1rem}
 .style-head .kind{font-size:.78rem;color:var(--muted);letter-spacing:.04em}
 .style-head .cnt{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.style-head label{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:.84rem;color:var(--muted)}
-.style-head input{width:70px}
+.style-head .lvtag{margin-left:auto;font-size:.84rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.lvrow{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px;margin-bottom:12px}
+.lvrow label{display:flex;align-items:center;justify-content:space-between;gap:6px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--sc);border-radius:8px;padding:6px 8px;font-size:.88rem;font-weight:600}
+.lvrow input{width:52px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:.86rem;background:transparent;color:var(--muted)}
 .chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink);font-weight:500}
@@ -246,7 +248,8 @@ td.num input{font-variant-numeric:tabular-nums;text-align:right}
 
   <section id="sec-skills">
     <h2>도술: 각성 레벨과 보유 도술</h2>
-    <p class="hint">각성은 스타일 전체에 적용되니 스타일마다 레벨을 적고, 배운 도술을 눌러 표시하세요. 표시한 도술은 아래에 돌파 단계 칸이 생깁니다(도술 하나에만 적용, 캐릭터 능력치 상승). 궁극기는 신식으로 자동 장착이라 목록에서 뺐습니다.</p>
+    <p class="hint">각성은 스타일 전체에 적용되니 아래 칸에 스타일마다 레벨을 적고, 배운 도술을 눌러 표시하세요. 표시한 도술은 아래에 돌파 단계 칸이 생깁니다(도술 하나에만 적용, 캐릭터 능력치 상승). 궁극기는 신식으로 자동 장착이라 목록에서 뺐습니다.</p>
+    <div class="lvrow" id="lvrow" role="group" aria-label="스타일별 각성 레벨"></div>
     <div class="styles" id="styles"></div>
   </section>
 
@@ -331,6 +334,17 @@ function renderStats(){
     l.appendChild(inp); box.appendChild(l);
   }
 }
+function lvText(st){ const v = state.levels[st]; return "각성 Lv " + (v === "" || v == null ? "-" : v); }
+function renderLevels(){
+  const box = $("lvrow"); box.textContent = "";
+  for (const st of DATA.styles) {
+    const lab = el("label", {style:"--sc:" + STYLE_COLOR[st]}, st);
+    const lv = el("input", {id:"lv-" + st, type:"number", min:"0", max:"50", inputmode:"numeric", "aria-label": st + " 각성 레벨"});
+    lv.value = state.levels[st] ?? "";
+    lv.addEventListener("input", () => { state.levels[st] = lv.value === "" ? "" : Number(lv.value); const t = $("lvt-" + st); if (t) t.textContent = lvText(st); changed(); });
+    lab.appendChild(lv); box.appendChild(lab);
+  }
+}
 function renderStyles(){
   const box = $("styles"); box.textContent = "";
   for (const st of DATA.styles) {
@@ -340,11 +354,7 @@ function renderStyles(){
     head.appendChild(el("span", {class:"kind"}, KIND[st] + " · 궁극기 " + (ultOf[st] || "-")));
     const owned = byStyle[st].filter(n => state.owned[n]);
     head.appendChild(el("span", {class:"cnt"}, "보유 " + owned.length + " / " + byStyle[st].length));
-    const lab = el("label", null, "각성 Lv");
-    const lv = el("input", {id:"lv-" + st, type:"number", min:"0", max:"50", inputmode:"numeric"});
-    lv.value = state.levels[st] ?? "";
-    lv.addEventListener("input", () => { state.levels[st] = lv.value === "" ? "" : Number(lv.value); changed(); });
-    lab.appendChild(lv); head.appendChild(lab); card.appendChild(head);
+    head.appendChild(el("span", {id:"lvt-" + st, class:"lvtag"}, lvText(st))); card.appendChild(head);
     const chips = el("div", {class:"chips"});
     for (const n of byStyle[st]) {
       const c = el("button", {type:"button", class:"chip", "aria-pressed": state.owned[n] ? "true" : "false"}, n); c.prepend(icon(n));
@@ -610,7 +620,7 @@ function renderLogs(){
   });
 }
 function renderAll(){
-  renderStats(); renderStyles(); $("slotCount").value = String(state.slotCount); renderTabs(); renderPreset(); renderLogs(); $("memo").value = state.memo; renderRight();
+  renderStats(); renderLevels(); renderStyles(); $("slotCount").value = String(state.slotCount); renderTabs(); renderPreset(); renderLogs(); $("memo").value = state.memo; renderRight();
 }
 $("slotCount").addEventListener("change", e => { state.slotCount = Number(e.target.value); if (pickSlot !== null && pickSlot >= state.slotCount) pickSlot = null; changed(); renderPreset(); });
 $("memo").addEventListener("input", e => { state.memo = e.target.value; changed(); });
