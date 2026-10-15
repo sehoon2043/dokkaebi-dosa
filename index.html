@@ -638,7 +638,7 @@ $("addLog").addEventListener("click", () => { state.logs.push({date: new Date().
 $("saveBtn").addEventListener("click", () => { clearTimeout(timer); save(); });
 
 const LS = "dosa-notebook-site-v1", LSA = "dosa-notebook-site-auth", LSR = "dosa-notebook-site-res";
-const API = "https://script.google.com/macros/s/AKfycbyKcM5VzloL0uFvisFV5U7A5XFdUmYlpAPQx2o0sU3f-zMwU4SYo0Ouq3kGaS9CkOMD/exec";
+const API = "https://dosa-api.vercel.app/api/dosa";
 let auth = null, myRes = null;
 function saveDraft(){ try { localStorage.setItem(LS, JSON.stringify(state)); } catch (e) {} }
 async function api(params, body){
@@ -805,7 +805,7 @@ function gmFetch(){
 }
 function gmRender(){
   const box = $("gmBody"); box.textContent = "";
-  if (!GM) { box.textContent = gmBusy ? "불러오는 중… (서버가 느리면 10초 넘게 걸려요)" : "길드원 정보를 불러오지 못했어요. 잠시 뒤 다시 열어 보세요."; return; }
+  if (!GM) { box.textContent = gmBusy ? "불러오는 중…" : "길드원 정보를 불러오지 못했어요. 잠시 뒤 다시 열어 보세요."; return; }
   const r = GM;
   const lv = (m, s) => Number((m.levels || {})[s]) || 0;
   const sum = m => GM_ST.reduce((a, s) => a + lv(m, s), 0);
