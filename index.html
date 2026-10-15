@@ -152,6 +152,8 @@ button.mini{padding:2px 9px;font-size:.78rem;margin-left:auto}
 .rec-points.alt{color:var(--muted)}
 .rec-points.warn li:last-child{color:var(--warn)}
 .vbadge{margin-left:8px;font-size:.72rem;font-weight:600;padding:1px 7px;border-radius:9px;border:1px solid currentColor;vertical-align:1px}.vbadge.good{color:var(--ok)}.vbadge.mid{color:var(--accent)}.vbadge.bad{color:var(--warn)}
+.slotrow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-bottom:10px}.slotrow .hint{margin:0}
+.rec-copy{display:none!important}
 .rec-copy{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:10px;border-top:1px dashed var(--line)}
 .rec-copy .confirm{font-size:.84rem;color:var(--warn)}
 .tabrow{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between}
@@ -264,6 +266,7 @@ td.num input{font-variant-numeric:tabular-nums;text-align:right}
   <section id="sec-skills">
     <h2>도술: 강화 레벨과 보유 도술</h2>
     <p class="hint">강화는 스타일 전체에 적용되니 아래 칸에 스타일마다 레벨을 적고, 배운 도술을 눌러 표시하세요. 표시한 도술은 아래에 각성 단계 칸이 생깁니다(도술 하나에만 적용, 캐릭터 능력치 상승). 궁극기는 신식으로 자동 장착이라 목록에서 뺐습니다.</p>
+    <div class="slotrow"><label class="toggle">도술 칸 수<select id="slotCount" style="width:auto"><option>5</option><option>6</option><option>7</option><option>8</option></select></label><span class="hint">게임에서 열린 도술 칸 수예요. 추천 트리를 이 칸 수에 맞춰 계산해요.</span></div>
     <div class="lvrow" id="lvrow" role="group" aria-label="스타일별 강화 레벨"></div>
     <div class="styles" id="styles"></div>
   </section>
@@ -288,7 +291,7 @@ td.num input{font-variant-numeric:tabular-nums;text-align:right}
   </section>
   </div>
   <div class="col-r panel">
-  <div class="ptabs" role="tablist" aria-label="오른쪽 패널"><button type="button" role="tab" data-rt="presets">내 프리셋</button><button type="button" role="tab" data-rt="recs">추천 트리</button></div>
+  
   <section id="sec-recs" hidden>
     <h2>추천 트리</h2>
     <p class="hint" id="recBasis"></p>
@@ -300,7 +303,7 @@ td.num input{font-variant-numeric:tabular-nums;text-align:right}
     <p class="hint">칸을 누르고 도술 목록에서 고르세요. 이미 다른 칸에 있는 도술을 고르면 두 칸이 서로 바뀝니다. 사용 순서는 ▲▼로 바꾸고, 힐처럼 필요할 때만 쓰는 도술은 '빼기'를 누르세요.</p>
     <div class="tabrow">
       <div class="tabs" id="presetTabs" role="tablist"></div>
-      <label class="toggle">열린 칸<select id="slotCount" style="width:auto"><option>5</option><option>6</option><option>7</option><option>8</option></select></label>
+      
     </div>
     <div class="preset" id="preset"></div>
   </section>
@@ -324,7 +327,7 @@ function blankPreset(i){ return {name:"프리셋 " + (i+1), slots:["","","","","
 function normalize(s){
   s = JSON.parse(JSON.stringify(s || {}));
   s.stats = s.stats || {}; s.levels = s.levels || {}; s.owned = s.owned || {};
-  s.slotCount = s.slotCount || 7; s.logs = s.logs || []; s.memo = s.memo || "";
+  s.slotCount = s.slotCount || 8; s.logs = s.logs || []; s.memo = s.memo || "";
   for (const n in s.owned) { const o = s.owned[n] || {}; if (o.aw && !o.br) o.br = o.aw; delete o.aw; s.owned[n] = o; }
   s.presets = s.presets || [];
   for (let i = 0; i < 5; i++) { s.presets[i] = Object.assign(blankPreset(i), s.presets[i] || {}); }
@@ -902,7 +905,7 @@ panelL.addEventListener("scroll", markNav, {passive:true}); markNav();
 // 오른쪽 패널: 내 프리셋 / 추천 트리 전환
 let RECS = {"updated": "2026-10-14", "basis": "저격 20 · 파멸 12 · 연타 11 · 절명 11 · 헌신 6 · 주술 6, 도술 8칸", "trees": [{"id": "mob", "tab": "몰이", "sub": "힐 없음 · 궁극기 폭주", "slots": ["영혼 소용돌이", "연쇄 타격", "화염구", "난타", "회전 난격", "화염 분출", "얼음화살", "날카로운 얼음창"], "ult": "폭주", "order": ["영혼 소용돌이", "연쇄 타격", "화염구", "화염 분출", "얼음화살", "난타", "폭주", "회전 난격", "날카로운 얼음창"], "stat": "몹 5마리가 뭉쳐 있는 조건 · 평타 비중 약 30%", "points": ["세 몰이 탭은 하단 5칸과 순서 뼈대가 같고 힐 자리만 다릅니다.", "하단 연타 3개(연쇄 타격·난타·회전 난격)라 궁극기 폭주가 나갑니다. 연타 신식(격노)이 적중마다 쌓여 주는 피해·받는 피해 감소가 각각 최대 20%까지 오르고, 3초간 적중이 없으면 초기화됩니다.", "흐름: 소용돌이로 모으기 → 연쇄 타격 방어력 감소 → 화염구 화상(폭주 추가 피해) → 화염 분출 원소 → 얼음화살(원소 시 +34.8%) → 난타 → 폭주.", "연타 도술은 근거리라 몹 무리 안에서 맞습니다.", "내 전투력보다 1~2단계 낮은 곳(엽전비경 1단계 등)에서 하세요."], "alt": ["회전 난격·난타를 빼면 하단 연타 3개가 안 돼 폭주가 나가지 않습니다. 나머지 칸(화염 분출·얼음창)은 낙뢰·붕괴하는 대지로 바꿔도 거의 같습니다.", "연타 광역 도술이 3개 안 될 때(파멸 궁 버전): 얼음화살 → 소용돌이 → 회전 난격 → 화염구 → 화염 분출 → 낙뢰 → 얼음창 → 붕괴하는 대지 → 대폭발."], "warn": false}, {"id": "mobheal", "tab": "몰이+힐", "sub": "힐 1개(생명의 축복) · 궁극기 폭주", "slots": ["영혼 소용돌이", "연쇄 타격", "화염구", "난타", "회전 난격", "화염 분출", "얼음화살", "생명의 축복"], "ult": "폭주", "order": ["영혼 소용돌이", "연쇄 타격", "화염구", "화염 분출", "얼음화살", "난타", "폭주", "회전 난격", "생명의 축복"], "stat": "몹 5마리가 뭉쳐 있는 조건 · 힐 없는 몰이보다 약 7% 느림", "points": ["힐 없는 몰이에서 날카로운 얼음창 자리에 생명의 축복을 넣었습니다.", "격노의 받는 피해 감소(최대 20%)와 난타의 받는 피해 감소(5%)까지 있어 파멸 트리보다 단단합니다.", "칸은 사용 순서대로 놓았습니다."], "alt": ["화염 분출을 낙뢰로 바꿔도 거의 같습니다."], "warn": false}, {"id": "mobheal2", "tab": "몰이+2힐", "sub": "힐 2개(생명의 축복 + 생명의 흐름) · 궁극기 폭주", "slots": ["영혼 소용돌이", "연쇄 타격", "화염구", "난타", "회전 난격", "얼음화살", "생명의 축복", "생명의 흐름"], "ult": "폭주", "order": ["영혼 소용돌이", "연쇄 타격", "화염구", "얼음화살", "난타", "폭주", "회전 난격", "생명의 축복", "생명의 흐름"], "stat": "몹 5마리가 뭉쳐 있는 조건 · 힐 없는 몰이보다 약 18% 느림 · 물약을 거의 안 쓰는 용도", "points": ["1힐 버전에서 화염 분출을 빼고 생명의 흐름을 넣었습니다. 흐름은 5초 동안 나눠 회복합니다.", "화염 분출이 빠져서 얼음화살의 원소 보너스는 없어집니다.", "몹이 아프게 때리는 곳(비경 2단 등)이나 물약값을 아끼고 싶을 때 쓰세요.", "칸은 사용 순서대로 놓았습니다."], "alt": ["흐름 대신 얼음화살을 빼고 화염 분출을 남겨도 거의 같습니다."], "warn": false}, {"id": "pure", "tab": "완전 단일", "sub": "단일 대상 도술만(저격 + 요혼격) · 궁극기 정조준", "ult": "정조준", "order": ["정조준", "폭발하는 화살", "쇠뇌 사격", "꿰뚫는 저격", "요혼격", "일점 저격", "밀쳐내는 화살", "사격", "쐐기 화살"], "slots": ["폭발하는 화살", "쇠뇌 사격", "꿰뚫는 저격", "요혼격", "일점 저격", "밀쳐내는 화살", "사격", "쐐기 화살"], "stat": "1분에 약 17.1마리 (몹 1~5초 처치, 몹 사이 이동 0.3초) · 평범 사냥보다 약 10% 느림", "points": ["광역 도술 없이 한 마리만 때리는 트리입니다. 옆 몹을 건드리기 싫거나 몹이 띄엄띄엄 있을 때 쓰세요.", "하단이 저격 4개 + 요혼격이라 궁극기 정조준이 나갑니다.", "칸은 사용 순서대로 놓았습니다."], "alt": ["2위(−0.6%): 쐐기 화살·이중 사격·밀쳐내는 화살·일점 저격·사격·꿰뚫는 저격·폭발하는 화살·쇠뇌 사격."], "warn": false}, {"id": "pureh", "tab": "완전 단일+힐", "sub": "단일 대상 도술만 + 생명의 축복 · 궁극기 정조준", "ult": "정조준", "order": ["정조준", "일점 저격", "쐐기 화살", "쇠뇌 사격", "이중 사격", "요혼격", "사격", "생명의 축복", "밀쳐내는 화살"], "slots": ["일점 저격", "쐐기 화살", "쇠뇌 사격", "이중 사격", "요혼격", "사격", "생명의 축복", "밀쳐내는 화살"], "stat": "1분에 약 15.6마리 · 완전 단일보다 약 9% 느림", "points": ["물약이 많이 들 때 쓰세요.", "칸은 사용 순서대로 놓았습니다."], "alt": [], "warn": false}, {"id": "single", "tab": "평범", "sub": "한 마리씩 잡지만 광역 도술 섞음 · 궁극기 대폭발", "slots": ["쐐기 화살", "요혼격", "꿰뚫는 저격", "화염구", "얼음화살", "쇠뇌 사격", "일점 저격", "밀쳐내는 화살"], "ult": "대폭발", "order": ["쐐기 화살", "요혼격", "꿰뚫는 저격", "쇠뇌 사격", "화염구", "일점 저격", "밀쳐내는 화살", "얼음화살", "대폭발"], "stat": "1분에 약 19.1마리 (몹 1~5초 처치, 몹 사이 이동 0.3초) · 완전 단일보다 약 11% 빠름 · 절명(이동 0.7초)과 비슷", "points": ["얼음화살·화염구·대폭발은 5명까지 맞는 광역이라 몹이 붙어 있으면 덤으로 더 잡힙니다. 계산은 몹 한 마리 기준입니다.", "하단에 파멸 3개(요혼격·화염구·얼음화살)라 궁극기 대폭발이 나갑니다. 파멸 도술을 쓸 때마다 영력이 차서 요기범람이 되면 도술 쿨이 초기화됩니다.", "칸은 사용 순서대로 놓았습니다."], "alt": ["2위(−0.5%): 쐐기 화살·요혼격·일점 저격·날카로운 얼음창·얼음화살·화염구·쇠뇌 사격·밀쳐내는 화살.", "궁극기를 정조준으로 쓰고 싶으면: 꿰뚫는 저격 → 쐐기 화살 → 일점 저격 → 쇠뇌 사격 → 밀쳐내는 화살 → 얼음화살 → 정조준 → 폭발하는 화살 → 화염구 (약 10% 느림)."]}, {"id": "singleh", "tab": "평범+힐", "sub": "평범 사냥 + 생명의 축복 · 궁극기 대폭발", "ult": "대폭발", "order": ["사격", "쐐기 화살", "쇠뇌 사격", "화염구", "얼음화살", "날카로운 얼음창", "생명의 축복", "일점 저격", "대폭발"], "slots": ["사격", "쐐기 화살", "화염구", "얼음화살", "날카로운 얼음창", "쇠뇌 사격", "생명의 축복", "일점 저격"], "stat": "1분에 약 17.7마리 · 평범 사냥보다 약 7% 느림 · 절명+힐보다 빠름", "points": ["물약이 많이 들면 이 트리를 쓰세요. 원거리라 근접 절명보다 덜 맞습니다.", "하단에 파멸 3개(화염구·얼음화살·얼음창)라 궁극기 대폭발이 나갑니다.", "칸은 사용 순서대로 놓았습니다."], "alt": ["2위(−0.9%): 요혼격·화염구·일점 저격·얼음화살·꿰뚫는 저격·쇠뇌 사격·밀쳐내는 화살·생명의 축복."], "warn": false}, {"id": "jhunt", "tab": "절명", "sub": "근접 필드 사냥, 힐 없음 · 궁극기 암습", "slots": ["내려찍기", "밀쳐내는 화살", "이중 사격", "찌르기", "심장 절단", "쇠뇌 사격", "쐐기 화살", "주먹 지르기"], "ult": "암습", "order": ["내려찍기", "밀쳐내는 화살", "이중 사격", "쇠뇌 사격", "찌르기", "심장 절단", "쐐기 화살", "암습", "주먹 지르기"], "stat": "1분에 약 19.1마리 (몹 사이 이동 0.7초) · 몹이 촘촘하면(0.4초) 약 21.1마리 · 흩어져 있으면(1초) 약 17.2마리", "points": ["몹이 촘촘히 붙어 있는 곳에서 가장 빠르고, 흩어져 있으면 평범(원거리)과 같거나 느립니다.", "몹이 금방 죽는 필드에서는 암습 한 방이 몹 체력보다 커서 피해가 버려집니다. 그래서 쿨 짧은 도술 위주로 짰습니다.", "하단에 절명 3개(내려찍기·찌르기·심장 절단)라 암습이 나갑니다. 암습은 순서 뒤쪽이라 다른 도술이 모두 쿨일 때만 씁니다.", "칸은 사용 순서대로 놓았습니다."], "alt": ["2위(−0.7%): 쐐기 화살·연속 찌르기·심장 절단·찌르기·내려찍기·쇠뇌 사격·주먹 지르기·이중 사격."], "warn": false}, {"id": "jhunt_h", "tab": "절명+힐", "sub": "근접 필드 사냥, 힐 1개 · 궁극기 암습", "slots": ["사격", "내려찍기", "쇠뇌 사격", "연속 찌르기", "찌르기", "주먹 지르기", "일점 저격", "생명의 축복"], "ult": "암습", "order": ["사격", "암습", "내려찍기", "쇠뇌 사격", "연속 찌르기", "주먹 지르기", "일점 저격", "찌르기", "생명의 축복"], "stat": "1분에 약 16.0마리 (몹 사이 이동 0.7초) · 촘촘하면 약 17.5마리 · 흩어져 있으면 약 14.8마리", "points": ["힐을 넣을 거면 평범+힐(원거리)이 더 빠르고 덜 맞습니다. 근접으로 꼭 해야 할 때 쓰세요.", "내려찍기의 [낙인]이 찌르기 체력 회복을 켜서 생명의 축복과 함께 버티는 힘이 생깁니다.", "하단에 절명 3개(내려찍기·연속 찌르기·찌르기)라 암습이 나갑니다.", "칸은 사용 순서대로 놓았습니다."], "alt": [], "warn": false}, {"id": "boss", "tab": "절명 보스", "sub": "절명 3개(찌르기·연속 찌르기·내려찍기) + 저격, 기습 안 씀", "slots": ["꿰뚫는 저격", "연속 찌르기", "사격", "찌르기", "내려찍기", "쇠뇌 사격", "연쇄 타격", "이중 사격"], "ult": "암습", "order": ["꿰뚫는 저격", "연속 찌르기", "암습", "사격", "찌르기", "쇠뇌 사격", "연쇄 타격", "이중 사격", "내려찍기"], "stat": "보스·필드보스·레이드용 · 허수아비 실측 6,726 DPS", "points": ["찌르기는 동작이 0.11초로 짧아서 검의 형상을 빨리 채우고, 그만큼 암습 쿨이 자주 줄어듭니다.", "검의 형상은 모든 도술을 쓸 때마다 1개씩 찹니다. 그래서 절명은 하단 3개(연속 찌르기·찌르기·내려찍기)만 두고 나머지는 쿨이 짧은 저격으로 채웠습니다.", "꿰뚫는 저격으로 받는 피해를 10% 올린 뒤 암습을 쓰고, 연쇄 타격으로 방어력을 깎습니다.", "기습처럼 순간이동하는 도술은 없습니다.", "칸은 사용 순서대로 놓았습니다."], "alt": ["2위(+1.5%, 보정에 따라 −2~+2%): 연속 찌르기·찌르기·사격·이중 사격·내려찍기·밀쳐내는 화살·쇠뇌 사격·꿰뚫는 저격.", "계산은 실제보다 4% 정도 높게 나오는 편입니다. 바꾸면 허수아비로 한 번 재 보세요."], "warn": false}, {"id": "boss_gi", "tab": "절명+기습", "sub": "보스 트리에서 이중 사격 대신 기습을 넣은 버전", "slots": ["사격", "찌르기", "꿰뚫는 저격", "내려찍기", "연속 찌르기", "쇠뇌 사격", "연쇄 타격", "기습"], "ult": "암습", "order": ["암습", "사격", "찌르기", "꿰뚫는 저격", "내려찍기", "쇠뇌 사격", "연쇄 타격", "연속 찌르기", "기습"], "stat": "절명 보스 트리보다 약 2% 낮음 · 기습 순간이동을 감수할 때만", "points": ["절명 보스 트리에서 이중 사격만 기습으로 바꿨습니다. 도술 7개가 같아서 바꾸기 쉽습니다.", "기습은 순간이동이라 자동으로 쓰면 보스 장판 안으로 들어갈 수 있습니다. 수동 사용을 권합니다.", "하단에 절명 3개(찌르기·내려찍기·연속 찌르기)라 암습이 나갑니다.", "칸은 사용 순서대로 놓았습니다."], "alt": [], "warn": false}]};
 const EXAMPLE_RECS = RECS;
-let rightTab = "presets", recActive = 0, recConfirm = null;
+let rightTab = "recs", recActive = 0, recConfirm = null;
 function renderRight(){
   for (const b of document.querySelectorAll(".ptabs button")) b.setAttribute("aria-selected", b.dataset.rt === rightTab ? "true" : "false");
   $("sec-presets").hidden = rightTab !== "presets";
